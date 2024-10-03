@@ -138,6 +138,7 @@ exports.LoadUtils = () => {
                 if (parsed) {
                     vcardOptions = {
                         type: 'vcard',
+                        subtype: null,
                         vcardFormattedName: window.Store.VCardUtils.vcardGetNameFromParsed(parsed)
                     };
                 }
