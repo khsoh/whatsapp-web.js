@@ -899,6 +899,7 @@ class Client extends EventEmitter {
             mentionedJidList: options.mentions || [],
             groupMentions: options.groupMentions,
             invokedBotWid: options.invokedBotWid,
+            ignoreQuoteErrors: options.ignoreQuoteErrors,
             extraOptions: options.extra
         };
 
