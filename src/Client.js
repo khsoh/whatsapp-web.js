@@ -724,8 +724,12 @@ class Client extends EventEmitter {
                     /** @type {GroupNotification} object does not provide enough information about this event, so a @type {Message} object is used. */
                     const message = new Message(this, msg);
 
-                    const newId = isParticipant ? msg.recipients[0] : msg._data.templateParams[1];
-                    const oldId = isParticipant ? msg.author : msg._data.templateParams[0];
+                    const newId = isParticipant
+                        ? msg.recipients[0]
+                        : msg._data.templateParams[1];
+                    const oldId = isParticipant
+                        ? msg.author
+                        : msg._data.templateParams[0];
 
                     /**
                      * Emitted when a contact or a group participant changes their phone number.
@@ -1397,8 +1401,8 @@ class Client extends EventEmitter {
                 content instanceof Buttons,
                 content instanceof List,
                 Array.isArray(content) &&
-                content.length > 0 &&
-                content[0] instanceof Contact,
+                    content.length > 0 &&
+                    content[0] instanceof Contact,
             ].includes(true)
         ) {
             console.warn(
@@ -1419,8 +1423,8 @@ class Client extends EventEmitter {
                 content instanceof Buttons,
                 content instanceof List,
                 Array.isArray(content) &&
-                content.length > 0 &&
-                content[0] instanceof Contact,
+                    content.length > 0 &&
+                    content[0] instanceof Contact,
             ].includes(true)
         ) {
             console.warn(
@@ -1802,10 +1806,10 @@ class Client extends EventEmitter {
             return !pinnedMsgs.length
                 ? []
                 : await Promise.all(
-                    pinnedMsgs.map((msg) =>
-                        window.WWebJS.getMessageModel(msg),
-                    ),
-                );
+                      pinnedMsgs.map((msg) =>
+                          window.WWebJS.getMessageModel(msg),
+                      ),
+                  );
         }, chatId);
 
         return pinnedMsgs.map((msg) => new Message(this, msg));
@@ -2107,9 +2111,9 @@ class Client extends EventEmitter {
                         .Chat.find(chatId));
                 action === 'MUTE'
                     ? await chat.mute.mute({
-                        expiration: unmuteDateTs,
-                        sendDevice: true,
-                    })
+                          expiration: unmuteDateTs,
+                          sendDevice: true,
+                      })
                     : await chat.mute.unmute({ sendDevice: true });
                 return {
                     isMuted: chat.mute.expiration !== 0,
@@ -2393,9 +2397,9 @@ class Client extends EventEmitter {
                                 window
                                     .require('WAWebCollections')
                                     .Chat.get(participant.wid) ||
-                                (await window
-                                    .require('WAWebCollections')
-                                    .Chat.find(participant.wid)),
+                                    (await window
+                                        .require('WAWebCollections')
+                                        .Chat.find(participant.wid)),
                                 createGroupResult.wid._serialized,
                                 createGroupResult.subject,
                                 participant.invite_code,
@@ -2660,11 +2664,11 @@ class Client extends EventEmitter {
 
                 countryCodes =
                     countryCodes.length === 1 &&
-                        countryCodes[0] === currentRegion
+                    countryCodes[0] === currentRegion
                         ? countryCodes
                         : countryCodes.filter((code) =>
-                            Object.keys(countryCodesIso).includes(code),
-                        );
+                              Object.keys(countryCodesIso).includes(code),
+                          );
 
                 const viewTypeMapping = {
                     0: 'RECOMMENDED',
@@ -2703,12 +2707,12 @@ class Client extends EventEmitter {
 
                 return channels
                     ? await Promise.all(
-                        channels.map((channel) =>
-                            window.WWebJS.getChatModel(channel, {
-                                isChannel: true,
-                            }),
-                        ),
-                    )
+                          channels.map((channel) =>
+                              window.WWebJS.getChatModel(channel, {
+                                  isChannel: true,
+                              }),
+                          ),
+                      )
                     : [];
             },
             searchOptions,
