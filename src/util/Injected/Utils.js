@@ -1091,7 +1091,7 @@ exports.LoadUtils = () => {
                 bizProfile.profileOptions &&
                     (contact.businessProfile = bizProfile);
             }
-            window.WWebJS.getContactModel(contact);
+            return window.WWebJS.getContactModel(contact);
         });
     };
 
