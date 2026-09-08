@@ -2021,12 +2021,41 @@ class Client extends EventEmitter {
      */
     async setDisplayName(displayName) {
         const couldSet = await this.pupPage.evaluate(async (displayName) => {
-            if (!window.require('WAWebConnModel').Conn.canSetMyPushname())
-                return false;
-            await window
-                .require('WAWebSetPushnameConnAction')
-                .setPushname(displayName);
-            return true;
+            // if (!window.require('WAWebConnModel').Conn.canSetMyPushname())
+            //     return false;
+            // await window
+            //     .require('WAWebSetPushnameConnAction')
+            //     .setPushname(displayName);
+            // return true;
+
+            // 1. Try to find the module dynamically from the Webpack cache
+            const modules = window.require('__debug').modulesMap;
+            let setPushnameModule = null;
+
+            for (const key in modules) {
+                const mod = modules[key];
+                if (mod && mod.exports && mod.exports.setPushname) {
+                    setPushnameModule = mod.exports;
+                    break;
+                }
+            }
+
+            // 2. Fallback check if the module hasn't been lazy-loaded yet
+            if (!setPushnameModule) {
+                try {
+                    setPushnameModule = window.require('WAWebSetPushnameConnAction');
+                } catch (e) {
+                    throw new Error("Could not find setPushname module dynamically or via legacy alias.");
+                }
+            }
+
+            // 3. Execute the function
+            if (setPushnameModule && typeof setPushnameModule.setPushname === 'function') {
+                await setPushnameModule.setPushname(displayName);
+                return true;
+            }
+
+            return false;
         }, displayName);
 
         return couldSet;
