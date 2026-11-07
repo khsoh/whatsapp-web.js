@@ -1357,7 +1357,9 @@ class Client extends EventEmitter {
         await this.pupBrowser.close();
 
         let maxDelay = 0;
-        while (this.pupBrowser.isConnected() && maxDelay < 10) {
+        const browser = this.pupBrowser;
+        const isConnected = browser?.isConnected?.();
+        while (isConnected && maxDelay < 10) {
             // waits a maximum of 1 second before calling the AuthStrategy
             await new Promise((resolve) => setTimeout(resolve, 100));
             maxDelay++;
@@ -2043,14 +2045,21 @@ class Client extends EventEmitter {
             // 2. Fallback check if the module hasn't been lazy-loaded yet
             if (!setPushnameModule) {
                 try {
-                    setPushnameModule = window.require('WAWebSetPushnameConnAction');
+                    setPushnameModule = window.require(
+                        'WAWebSetPushnameConnAction',
+                    );
                 } catch (e) {
-                    throw new Error("Could not find setPushname module dynamically or via legacy alias.");
+                    throw new Error(
+                        'Could not find setPushname module dynamically or via legacy alias.',
+                    );
                 }
             }
 
             // 3. Execute the function
-            if (setPushnameModule && typeof setPushnameModule.setPushname === 'function') {
+            if (
+                setPushnameModule &&
+                typeof setPushnameModule.setPushname === 'function'
+            ) {
                 await setPushnameModule.setPushname(displayName);
                 return true;
             }
