@@ -1742,18 +1742,22 @@ exports.LoadUtils = () => {
 
         if (typeof duration !== 'number') return false;
 
-        const originalFunction = window.require(
-            'WAWebPinMsgConstants',
-        ).getPinExpiryDuration;
-        window.require('WAWebPinMsgConstants').getPinExpiryDuration = () =>
-            duration;
+        // const originalFunction = window.require(
+        //     'WAWebPinMsgConstants',
+        // ).getPinExpiryDuration;
+        // window.require('WAWebPinMsgConstants').getPinExpiryDuration = () =>
+        //     duration;
 
         const response = await window
             .require('WAWebSendPinMessageAction')
-            .sendPinInChatMsg(message, action, duration);
+            .sendPinInChatMsg({
+                msg: message,
+                pinType: action,
+                pinExpiryDurationOption: duration,
+            });
 
-        window.require('WAWebPinMsgConstants').getPinExpiryDuration =
-            originalFunction;
+        // window.require('WAWebPinMsgConstants').getPinExpiryDuration =
+        //     originalFunction;
 
         return response.messageSendResult === 'OK';
     };

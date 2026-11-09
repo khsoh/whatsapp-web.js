@@ -506,6 +506,20 @@ class Client extends EventEmitter {
             page = (await browser.pages())[0];
         }
 
+        // CONSOLE DEBUG for code in Utils.js
+        page.on('console', async (msg) => {
+            // Asynchronously resolve all arguments passed to the console log
+            const args = await Promise.all(msg.args().map(arg => arg.jsonValue()));
+
+            // Dynamically map to the appropriate terminal console method (log, warn, error)
+            const type = msg.type(); // 'log', 'warn', 'error', 'dir', etc.
+            if (typeof console[type] === 'function') {
+              console[type](...args);
+            } else {
+              console.log(...args);
+            }
+        });
+
         if (this.options.proxyAuthentication !== undefined) {
             await page.authenticate(this.options.proxyAuthentication);
         }
