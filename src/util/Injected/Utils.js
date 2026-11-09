@@ -8,7 +8,7 @@ exports.LoadUtils = () => {
         error: (...args) => console.error('[WWEBJS:ERROR]', ...args),
     };
 
-    debug.log('LoadUtils debug log initialized');
+    debug.log('LoadUtils debug logger initialized');
 
     window.WWebJS = {};
 

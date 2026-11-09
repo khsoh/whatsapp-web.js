@@ -509,14 +509,14 @@ class Client extends EventEmitter {
         // CONSOLE DEBUG for code in Utils.js
         page.on('console', async (msg) => {
             const text = msg.text();
-            const isWWebJSDebug = text.startsWith('[WWEBJS:');
+            const isWWebJSDebug = text.match(
+                /^\[WWEBJS:(DEBUG|WARN|ERROR)\]\s*/,
+            );
 
             // ==========================================================
-            // MASTER FILTER LOGIC:
-            // If debugMode is FALSE, we ONLY allow normal page behavior
-            // and block our verbose internal development traces.
+            // Filter for only WWebJS Debug messages
             // ==========================================================
-            if (!this.options.debugMode && isWWebJSDebug) {
+            if (!isWWebJSDebug) {
                 return;
             }
 
@@ -525,18 +525,6 @@ class Client extends EventEmitter {
                 let args = await Promise.all(
                     msg.args().map((arg) => arg.jsonValue()),
                 );
-
-                // Clean up the prefix string for your terminal if it's one of yours
-                if (
-                    isWWebJSDebug &&
-                    args.length > 0 &&
-                    typeof args[0] === 'string'
-                ) {
-                    args[0] = args[0].replace(
-                        /^\[WWEBJS:(DEBUG|WARN|ERROR)\]\s*/,
-                        '',
-                    );
-                }
 
                 // Dynamically map to the appropriate terminal console method (log, warn, error)
                 const type = msg.type(); // 'log', 'warn', 'error', 'dir', etc.
