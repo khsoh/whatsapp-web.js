@@ -1,6 +1,15 @@
 'use strict';
 
 exports.LoadUtils = () => {
+    // debug logger
+    const debug = {
+        log: (...args) => console.log('[WWEBJS:DEBUG]', ...args),
+        warn: (...args) => console.warn('[WWEBJS:WARN]', ...args),
+        error: (...args) => console.error('[WWEBJS:ERROR]', ...args),
+    };
+
+    debug.log('LoadUtils debug log initialized');
+
     window.WWebJS = {};
 
     /**

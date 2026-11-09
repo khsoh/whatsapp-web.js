@@ -508,15 +508,48 @@ class Client extends EventEmitter {
 
         // CONSOLE DEBUG for code in Utils.js
         page.on('console', async (msg) => {
-            // Asynchronously resolve all arguments passed to the console log
-            const args = await Promise.all(msg.args().map(arg => arg.jsonValue()));
+            const text = msg.text();
+            const isWWebJSDebug = text.startsWith('[WWEBJS:');
 
-            // Dynamically map to the appropriate terminal console method (log, warn, error)
-            const type = msg.type(); // 'log', 'warn', 'error', 'dir', etc.
-            if (typeof console[type] === 'function') {
-              console[type](...args);
-            } else {
-              console.log(...args);
+            // ==========================================================
+            // MASTER FILTER LOGIC:
+            // If debugMode is FALSE, we ONLY allow normal page behavior
+            // and block our verbose internal development traces.
+            // ==========================================================
+            if (!this.options.debugMode && isWWebJSDebug) {
+                return;
+            }
+
+            try {
+                // Asynchronously resolve all arguments passed to the console log
+                let args = await Promise.all(
+                    msg.args().map((arg) => arg.jsonValue()),
+                );
+
+                // Clean up the prefix string for your terminal if it's one of yours
+                if (
+                    isWWebJSDebug &&
+                    args.length > 0 &&
+                    typeof args[0] === 'string'
+                ) {
+                    args[0] = args[0].replace(
+                        /^\[WWEBJS:(DEBUG|WARN|ERROR)\]\s*/,
+                        '',
+                    );
+                }
+
+                // Dynamically map to the appropriate terminal console method (log, warn, error)
+                const type = msg.type(); // 'log', 'warn', 'error', 'dir', etc.
+                if (typeof console[type] === 'function') {
+                    console[type](...args);
+                } else {
+                    console.log(...args);
+                }
+            } catch (err) {
+                // Fallback: If WhatsApp logs a huge circular object that jsonValue()
+                // fails to parse, fallback to printing the plain text message string
+                // so your terminal doesn't throw a serialization error.
+                console.log(`[Browser Console ${msg.type()}]`, text);
             }
         });
 

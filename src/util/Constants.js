@@ -25,6 +25,7 @@ exports.DefaultOptions = {
         showNotification: true,
         intervalMs: 180000,
     },
+    debugMode: false,
 };
 
 /**
