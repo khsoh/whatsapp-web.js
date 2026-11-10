@@ -1829,4 +1829,33 @@ exports.LoadUtils = () => {
         }
         return color;
     };
+
+    /**
+     * Retrieves and lists all registered module names available inside WhatsApp's require system.
+     */
+    window.WWebJS.getAllWhatsAppModules = function () {
+        try {
+            // Modern WhatsApp versions store the master module map inside the '__debug' module
+            const debugModule = window.require('__debug');
+
+            if (debugModule && debugModule.modulesMap) {
+                // Return an array of all registered module string identifiers
+                return Object.keys(debugModule.modulesMap);
+            }
+
+            // Fallback for older builds if modulesMap is in a different location
+            const requireModules = window.require.m || window.require.s;
+            if (requireModules) {
+                return Object.keys(requireModules);
+            }
+
+            debug.warn(
+                'Could not locate the WhatsApp Web module registry map.',
+            );
+            return [];
+        } catch (e) {
+            debug.error('Failed to extract module list:', e.message);
+            return [];
+        }
+    };
 };

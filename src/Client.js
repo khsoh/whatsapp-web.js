@@ -3573,6 +3573,16 @@ class Client extends EventEmitter {
                 new PollVote(this.client, { ...pollVote, parentMessage: msg }),
         );
     }
+
+    /**
+     * Return list of WhatsApp modules
+     */
+    async getWhatsAppModules() {
+        const modules = await this.pupPage.evaluate(() => {
+            return window.WWebJS.getAllWhatsAppModules();
+        });
+        return modules.sort();
+    }
 }
 
 module.exports = Client;
